@@ -1,0 +1,3 @@
+punkt
+stopwords
+tokenizers/punkt/portuguese.pickle 

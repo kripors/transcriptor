@@ -1,0 +1,21 @@
+[theme]
+primaryColor = "#6C63FF"
+backgroundColor = "#F8F9FD"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#333333"
+font = "sans serif"
+
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false
+
+[global]
+developmentMode = false
+logLevel = "error"
+
+[deprecation]
+showPyplotGlobalUse = false 
