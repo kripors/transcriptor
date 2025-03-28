@@ -4,6 +4,14 @@ import os
 import sys
 import streamlit as st
 
+# Configuração da página - DEVE ser a primeira chamada Streamlit
+st.set_page_config(
+    page_title="Processador de Áudio e Transcrição",
+    page_icon="🎙️",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 # Verificar se o FFmpeg embutido está disponível
 try:
     from embedded_ffmpeg import check_ffmpeg
@@ -61,3 +69,7 @@ if not ffmpeg_encontrado:
 
 # Importar o app original
 import app
+
+# Substituir a função set_page_config no módulo app para não fazer nada
+# Isso é necessário para evitar chamadas duplicadas
+app.st.set_page_config = lambda **kwargs: None

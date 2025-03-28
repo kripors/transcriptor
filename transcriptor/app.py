@@ -58,13 +58,23 @@ def check_ffmpeg():
         st.error(f"Erro ao verificar FFmpeg: {str(e)}")
         return False
 
-# Configuração inicial da página
-st.set_page_config(
-    page_title="Processador de Áudio e Transcrição",
-    page_icon="🎙️",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+# Verificar se set_page_config já foi chamado
+_page_config_already_set = False
+try:
+    # Tenta acessar uma variável que só existiria se o Streamlit já tiver sido inicializado
+    st._config.get_option("server.enableCORS")
+    _page_config_already_set = True
+except:
+    pass
+
+# Configuração inicial da página - só executar se não tiver sido configurado ainda
+if not _page_config_already_set:
+    st.set_page_config(
+        page_title="Processador de Áudio e Transcrição",
+        page_icon="🎙️",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
 
 # Estilo CSS personalizado
 st.markdown("""
