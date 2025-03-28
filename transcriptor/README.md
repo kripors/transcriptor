@@ -38,3 +38,45 @@ streamlit run app.py
 - `packages.txt`: Dependências de sistema
 - `nltk.txt`: Recursos NLTK
 - `.streamlit/config.toml`: Configurações do Streamlit 
+
+## Dependências externas
+
+Este aplicativo utiliza o FFmpeg para processamento de áudio e vídeo. Para sua conveniência, incluímos uma versão embutida do FFmpeg que é baixada automaticamente quando necessário.
+
+### FFmpeg Embutido
+
+O aplicativo inclui um sistema automatizado para baixar e configurar o FFmpeg:
+
+- Quando o aplicativo for iniciado pela primeira vez, ele detectará automaticamente o sistema operacional e baixará a versão adequada do FFmpeg.
+- Os binários do FFmpeg serão armazenados localmente na pasta `ffmpeg_bin`.
+- Não é necessário instalar o FFmpeg separadamente.
+
+### Download Manual do FFmpeg
+
+Se preferir baixar manualmente o FFmpeg, você pode executar:
+
+```bash
+python download_ffmpeg.py
+```
+
+Opções disponíveis:
+- `--help`: Mostra ajuda sobre o uso do script
+- `--current`: Baixa apenas para o sistema operacional atual (padrão)
+- `--all`: Baixa para todos os sistemas operacionais suportados (Windows, Linux, macOS)
+- `--windows`: Baixa apenas para Windows
+- `--linux`: Baixa apenas para Linux
+- `--macos`: Baixa apenas para macOS
+
+### Para desenvolvedores
+
+Se estiver desenvolvendo ou modificando este aplicativo, o módulo `embedded_ffmpeg.py` fornece uma API para trabalhar com o FFmpeg embutido:
+
+```python
+from embedded_ffmpeg import EmbeddedFFmpeg
+
+# Extrair áudio de um vídeo
+EmbeddedFFmpeg.extract_audio("video.mp4", "audio.mp3")
+
+# Converter um vídeo
+EmbeddedFFmpeg.convert_video("input.mp4", "output.webm", options={"vcodec": "vp9", "acodec": "opus"})
+``` 

@@ -540,6 +540,17 @@ class AudioExtractor:
     @staticmethod
     def extract_audio(video_path, output_path):
         try:
+            # Primeiro tenta usar o FFmpeg embutido
+            try:
+                from embedded_ffmpeg import EmbeddedFFmpeg
+                result = EmbeddedFFmpeg.extract_audio(video_path, output_path)
+                if result:
+                    return result
+                # Se falhar, continua com o método padrão
+            except ImportError:
+                st.warning("FFmpeg embutido não encontrado. Tentando método alternativo...")
+            
+            # Método original com MoviePy como fallback
             video = VideoFileClip(video_path)
             audio = video.audio
             audio.write_audiofile(output_path)
@@ -547,7 +558,22 @@ class AudioExtractor:
         except Exception as e:
             st.error(f"Erro ao extrair áudio: {str(e)}")
             if "ffmpeg" in str(e).lower():
-                st.error("Certifique-se de que o FFmpeg está instalado corretamente.")
+                st.error("Certifique-se de que o FFmpeg está instalado corretamente ou use o FFmpeg embutido.")
+                
+                # Tentar baixar FFmpeg embutido se o erro for relacionado ao FFmpeg
+                try:
+                    st.info("Tentando baixar e configurar o FFmpeg embutido...")
+                    from download_ffmpeg import download_ffmpeg_for_current_os
+                    download_ffmpeg_for_current_os()
+                    
+                    # Tentar novamente com FFmpeg embutido
+                    from embedded_ffmpeg import EmbeddedFFmpeg
+                    result = EmbeddedFFmpeg.extract_audio(video_path, output_path)
+                    if result:
+                        st.success("Áudio extraído com sucesso usando FFmpeg embutido!")
+                        return result
+                except Exception as e2:
+                    st.error(f"Não foi possível configurar o FFmpeg embutido: {str(e2)}")
             return None
 
 # Classe para transcrição de áudio
@@ -968,7 +994,7 @@ with st.sidebar:
     st.markdown("### Configurações de API")
     
     google_api_key = st.text_input("Google API Key (Gemini)", type="password")
-    groq_api_key = st.text_input("Groq API Key", type="password", value="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")
+    groq_api_key = st.text_input("Groq API Key", type="password")
     
     if st.button("Salvar Configurações"):
         # Criar arquivo de configuração
