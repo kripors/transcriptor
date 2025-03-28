@@ -1,8 +1,0 @@
-streamlit
-moviepy
-google-generativeai
-groq
-pydub
-nltk
-python-docx
-

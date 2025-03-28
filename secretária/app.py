@@ -35,7 +35,23 @@ ctx = get_script_run_ctx()
 def check_ffmpeg():
     try:
         # Verificar se ffmpeg está no PATH
-        if shutil.which('ffmpeg') is None:
+        ffmpeg_path = shutil.which('ffmpeg')
+        if ffmpeg_path is None:
+            # Verificar em caminhos específicos do Streamlit Cloud
+            additional_paths = [
+                "/usr/bin",
+                "/usr/local/bin",
+                "/app/.apt/usr/bin",  # Caminho específico do Streamlit Cloud
+                "/home/appuser/.apt/usr/bin"  # Outro caminho possível no Streamlit Cloud
+            ]
+            
+            # Verificar cada caminho manualmente
+            for path in additional_paths:
+                potential_path = os.path.join(path, 'ffmpeg')
+                if os.path.exists(potential_path) and os.access(potential_path, os.X_OK):
+                    # Adicionar ao PATH para futuras verificações
+                    os.environ["PATH"] = path + os.pathsep + os.environ["PATH"]
+                    return True
             return False
         return True
     except Exception as e:
@@ -1027,7 +1043,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-video_file = st.file_uploader("", type=['mp4', 'avi', 'mov', 'mkv'])
+video_file = st.file_uploader("Selecione um arquivo de vídeo", type=['mp4', 'avi', 'mov', 'mkv'])
 
 if video_file is not None:
     # Salvar o arquivo de vídeo temporariamente
@@ -1153,7 +1169,7 @@ if st.session_state.audio_path and os.path.exists(st.session_state.audio_path):
                     
                     # Exibir prévia da transcrição
                     st.markdown("### Prévia da Transcrição")
-                    st.text_area("", transcription, height=200)
+                    st.text_area("Transcrição", transcription, height=200)
                     
                     # Botão para baixar a transcrição
                     st.download_button(
@@ -1236,7 +1252,7 @@ if st.session_state.transcription_text:
                         
                         # Exibir prévia do resumo
                         st.markdown("### Prévia do Resumo")
-                        st.text_area("", resumo_profissional, height=200)
+                        st.text_area("Resumo", resumo_profissional, height=200)
                         
                         # Botão para download
                         col1, col2 = st.columns([1, 1])
